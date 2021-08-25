@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #ifndef Svc_FileUplink_HPP
@@ -94,7 +87,7 @@ namespace Svc {
           //! Record a received file
           void fileReceived(void) {
             ++this->n;
-            this->fileUplink->tlmWrite_FileUplink_FilesReceived(n);
+            this->fileUplink->tlmWrite_FilesReceived(n);
           }
 
         PRIVATE:
@@ -122,7 +115,7 @@ namespace Svc {
           //! Record a packet received
           void packetReceived(void) {
             ++this->n;
-            this->fileUplink->tlmWrite_FileUplink_PacketsReceived(n);
+            this->fileUplink->tlmWrite_PacketsReceived(n);
           }
 
         PRIVATE:
@@ -179,7 +172,7 @@ namespace Svc {
           //! Record a warning
           void warning(void) {
             ++this->n;
-            this->fileUplink->tlmWrite_FileUplink_Warnings(n);
+            this->fileUplink->tlmWrite_Warnings(n);
           }
 
         PRIVATE:
@@ -225,7 +218,7 @@ namespace Svc {
       //!
       void bufferSendIn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer buffer 
+          Fw::Buffer& buffer //!< Buffer wrapping data
       );
 
       //! Handler implementation for pingIn

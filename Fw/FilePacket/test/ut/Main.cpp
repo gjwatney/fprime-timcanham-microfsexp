@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include <Fw/Buffer/BufferSerializableAc.hpp>
+#include <Fw/Buffer/Buffer.hpp>
 #include <Fw/FilePacket/FilePacket.hpp>
 #include <Fw/FilePacket/GTest/FilePackets.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -48,7 +48,7 @@ namespace Fw {
     );
     const U32 size = expected.bufferSize();
     U8 bytes[size];
-    Buffer buffer(0, 0, reinterpret_cast<U64>(bytes), size);
+    Buffer buffer(bytes, size);
     SerialBuffer serialBuffer(bytes, size);
     {
       const SerializeStatus status = 
@@ -73,7 +73,7 @@ namespace Fw {
   TEST(FilePacket, DataPacket) {
     FilePacket::DataPacket expected;
     const U32 dataSize = 10;
-    U8 data[dataSize];
+    U8 data[dataSize] = {}; // Initialize to appease valgrind
     expected.initialize(
         3, // Sequence index
         42, // Byte offset
@@ -82,7 +82,7 @@ namespace Fw {
     );
     const U32 size = expected.bufferSize();
     U8 bytes[size];
-    Buffer buffer(0, 0, reinterpret_cast<U64>(bytes), size);
+    Buffer buffer(bytes, size);
     SerialBuffer serialBuffer(bytes, size);
     {
       const SerializeStatus status = 
@@ -113,7 +113,7 @@ namespace Fw {
     );
     const U32 size = expected.bufferSize();
     U8 bytes[size];
-    Buffer buffer(0, 0, reinterpret_cast<U64>(bytes), size);
+    Buffer buffer(bytes, size);
     SerialBuffer serialBuffer(bytes, size);
     {
       const SerializeStatus status = 
@@ -143,7 +143,7 @@ namespace Fw {
     );
     const U32 size = expected.bufferSize();
     U8 bytes[size];
-    Buffer buffer(0, 0, reinterpret_cast<U64>(bytes), size);
+    Buffer buffer(bytes, size);
     SerialBuffer serialBuffer(bytes, size);
     {
       const SerializeStatus status = 

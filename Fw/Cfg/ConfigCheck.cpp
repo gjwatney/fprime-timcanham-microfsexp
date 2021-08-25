@@ -6,18 +6,11 @@
  * \copyright
  * Copyright 2009-2016, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  *
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 
 // Check that command/telemetry strings are not larger than an argument buffer
@@ -29,5 +22,5 @@ FW_CONFIG_ERROR(FW_PARAM_STRING_MAX_SIZE <= FW_PARAM_BUFFER_MAX_SIZE,PRM_STRING_
 
 // Text logging needs the code generator for serializables to generate a stringified version of the
 // value.
-FW_CONFIG_ERROR((FW_ENABLE_TEXT_LOGGING == 1) && (FW_SERIALIZABLE_TO_STRING == 1),FW_SERIALIZABLE_TO_STRING_not_enabled_for_FW_ENABLE_TEXT_LOGGING);
+FW_CONFIG_ERROR((FW_ENABLE_TEXT_LOGGING == 0) || ( FW_SERIALIZABLE_TO_STRING == 1),FW_SERIALIZABLE_TO_STRING_not_enabled_for_FW_ENABLE_TEXT_LOGGING);
 

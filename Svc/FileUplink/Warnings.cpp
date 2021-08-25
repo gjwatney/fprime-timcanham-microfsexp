@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #include <Svc/FileUplink/FileUplink.hpp>
@@ -24,7 +17,7 @@ namespace Svc {
   void FileUplink::Warnings ::
     invalidReceiveMode(const Fw::FilePacket::Type packetType)
   {
-    this->fileUplink->log_WARNING_HI_FileUplink_InvalidReceiveMode(
+    this->fileUplink->log_WARNING_HI_InvalidReceiveMode(
         static_cast<U32>(packetType),
         static_cast<U32>(fileUplink->receiveMode)
     );
@@ -34,7 +27,7 @@ namespace Svc {
   void FileUplink::Warnings ::
     fileOpen(Fw::LogStringArg& fileName)
   {
-    this->fileUplink->log_WARNING_HI_FileUplink_FileOpenError(fileName);
+    this->fileUplink->log_WARNING_HI_FileOpenError(fileName);
     this->warning();
   }
 
@@ -44,7 +37,7 @@ namespace Svc {
         Fw::LogStringArg& fileName
     )
   {
-    this->fileUplink->log_WARNING_HI_FileUplink_PacketOutOfBounds(
+    this->fileUplink->log_WARNING_HI_PacketOutOfBounds(
         sequenceIndex,
         fileName
     );
@@ -57,7 +50,7 @@ namespace Svc {
         const U32 lastSequenceIndex
     )
   {
-    this->fileUplink->log_WARNING_HI_FileUplink_PacketOutOfOrder(
+    this->fileUplink->log_WARNING_HI_PacketOutOfOrder(
         sequenceIndex,
         lastSequenceIndex
     );
@@ -67,7 +60,7 @@ namespace Svc {
   void FileUplink::Warnings ::
     fileWrite(Fw::LogStringArg& fileName)
   {
-    this->fileUplink->log_WARNING_HI_FileUplink_FileWriteError(fileName);
+    this->fileUplink->log_WARNING_HI_FileWriteError(fileName);
     this->warning();
   }
 
@@ -77,7 +70,7 @@ namespace Svc {
         const U32 read
     )
   {
-    this->fileUplink->log_WARNING_HI_FileUplink_BadChecksum(
+    this->fileUplink->log_WARNING_HI_BadChecksum(
         this->fileUplink->file.name,
         computed,
         read

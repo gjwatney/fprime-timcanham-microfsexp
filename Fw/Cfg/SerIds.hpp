@@ -8,15 +8,8 @@
  * \copyright
  * Copyright 2009-2015, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  * <br /><br />
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 #ifndef _FW_SER_IDS_HPP_
 #define _FW_SER_IDS_HPP_
@@ -63,6 +56,7 @@ namespace Fw {
 
         FW_TYPEID_EIGHTY_CHAR_STRING = 50, //!< 80 char string Buffer type id
         FW_TYPEID_INTERNAL_INTERFACE_STRING =   51, //!< interface string Buffer type id
+        FW_TYPEID_FIXED_LENGTH_STRING = 52, //!< 256 char string Buffer type id
     };
 }
 

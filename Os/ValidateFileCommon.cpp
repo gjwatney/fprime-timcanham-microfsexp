@@ -23,13 +23,13 @@ namespace Os {
         if( FileSystem::OP_OK != fs_status ) {
             return File::BAD_SIZE;
         }
-        const NATIVE_INT_TYPE max_itr = fileSize/VFILE_HASH_CHUNK_SIZE + 1;
+        const NATIVE_INT_TYPE max_itr = static_cast<NATIVE_INT_TYPE>(fileSize/VFILE_HASH_CHUNK_SIZE + 1);
         
         // Read all data from file and update hash:
         Utils::Hash hash;
         hash.init();
         U8 buffer[VFILE_HASH_CHUNK_SIZE];
-        NATIVE_INT_TYPE size;
+        NATIVE_INT_TYPE size = 0;
         NATIVE_INT_TYPE cnt = 0;
         while( cnt <= max_itr ) {
             // Read out chunk from file:
@@ -113,7 +113,7 @@ namespace Os {
         return status;
     }
 
-    // Enum and function for translating from a status to a validataion status: 
+    // Enum and function for translating from a status to a validation status: 
     typedef enum {
         FileType,
         HashFileType
@@ -138,7 +138,10 @@ namespace Os {
                         return ValidateFile::OTHER_ERROR;
                     case File::OTHER_ERROR:
                         return ValidateFile::OTHER_ERROR;
+                    default:
+                        FW_ASSERT(0, status);
                 }
+                break;
             case HashFileType:
                 switch (status) {
                     case File::OP_OK:
@@ -155,13 +158,23 @@ namespace Os {
                         return ValidateFile::OTHER_ERROR;
                     case File::OTHER_ERROR:
                         return ValidateFile::OTHER_ERROR;
+                    default:
+                        FW_ASSERT(0, status);
                 }
+                break;
+            default:
+                FW_ASSERT(0, type);
         }
 
         return ValidateFile::OTHER_ERROR;
     }
   
     ValidateFile::Status ValidateFile::validate(const char* fileName, const char* hashFileName) {
+        Utils::HashBuffer hashBuffer; // pass by reference - final value is unused
+        return validate(fileName, hashFileName, hashBuffer);
+    }
+
+    ValidateFile::Status ValidateFile::validate(const char* fileName, const char* hashFileName, Utils::HashBuffer &hashBuffer) {
 
         File::Status status;
 
@@ -184,26 +197,32 @@ namespace Os {
             return ValidateFile::VALIDATION_FAIL;
         }
 
+        hashBuffer = savedHash;
+
         return ValidateFile::VALIDATION_OK;
     }
 
-    ValidateFile::Status ValidateFile::createValidation(const char* fileName, const char* hashFileName) {
+    ValidateFile::Status ValidateFile::createValidation(const char* fileName, const char* hashFileName, Utils::HashBuffer &hashBuffer) {
 
         File::Status status;
 
         // Compute the file's hash:
-        Utils::HashBuffer computedHash;
-        status = computeHash(fileName, computedHash);
+        status = computeHash(fileName, hashBuffer);
         if( File::OP_OK != status ) {
             return translateStatus(status, FileType);
         }
 
-        status = writeHash(hashFileName, computedHash);
+        status = writeHash(hashFileName, hashBuffer);
         if( File::OP_OK != status ) {
             return translateStatus(status, HashFileType);
         }
 
         return ValidateFile::VALIDATION_OK;
+    }
+
+    ValidateFile::Status ValidateFile::createValidation(const char* fileName, const char* hashFileName) {
+        Utils::HashBuffer hashBuffer; // pass by reference - final value is unused
+        return createValidation(fileName, hashFileName, hashBuffer);
     }
 
 }

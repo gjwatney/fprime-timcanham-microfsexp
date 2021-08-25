@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FileManager.hpp
 // \author bocchino
 // \brief  hpp file for FileManager component implementation class
@@ -6,16 +6,9 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
-// 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
-// ====================================================================== 
+// acknowledged.
+//
+// ======================================================================
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,7 +20,7 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   FileManager ::
@@ -45,7 +38,7 @@ namespace Svc {
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     FileManagerComponentBase::init(queueDepth, instance);
   }
@@ -57,7 +50,7 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Command handler implementations 
+  // Command handler implementations
   // ----------------------------------------------------------------------
 
   void FileManager ::
@@ -67,14 +60,17 @@ namespace Svc {
         const Fw::CmdStringArg& dirName
     )
   {
-    const Os::FileSystem::Status status = 
+    Fw::LogStringArg logStringDirName(dirName.toChar());
+    this->log_ACTIVITY_HI_CreateDirectoryStarted(logStringDirName);
+    const Os::FileSystem::Status status =
       Os::FileSystem::createDirectory(dirName.toChar());
     if (status != Os::FileSystem::OP_OK) {
-      Fw::LogStringArg logStringDirName(dirName.toChar());
       this->log_WARNING_HI_DirectoryCreateError(
           logStringDirName,
           status
       );
+    } else {
+      this->log_ACTIVITY_HI_CreateDirectorySucceeded(logStringDirName);
     }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
@@ -87,14 +83,17 @@ namespace Svc {
         const Fw::CmdStringArg& fileName
     )
   {
+    Fw::LogStringArg logStringFileName(fileName.toChar());
+    this->log_ACTIVITY_HI_RemoveFileStarted(logStringFileName);
     const Os::FileSystem::Status status =
       Os::FileSystem::removeFile(fileName.toChar());
     if (status != Os::FileSystem::OP_OK) {
-      Fw::LogStringArg logStringFileName(fileName.toChar());
       this->log_WARNING_HI_FileRemoveError(
           logStringFileName,
           status
       );
+    } else {
+      this->log_ACTIVITY_HI_RemoveFileSucceeded(logStringFileName);
     }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
@@ -108,17 +107,20 @@ namespace Svc {
         const Fw::CmdStringArg& destFileName
     )
   {
-    const Os::FileSystem::Status status = 
+    Fw::LogStringArg logStringSource(sourceFileName.toChar());
+    Fw::LogStringArg logStringDest(destFileName.toChar());
+    this->log_ACTIVITY_HI_MoveFileStarted(logStringSource, logStringDest);
+    const Os::FileSystem::Status status =
       Os::FileSystem::moveFile(
-          sourceFileName.toChar(), 
+          sourceFileName.toChar(),
           destFileName.toChar()
       );
     if (status != Os::FileSystem::OP_OK) {
-      Fw::LogStringArg logStringSource(sourceFileName.toChar());
-      Fw::LogStringArg logStringDest(destFileName.toChar());
       this->log_WARNING_HI_FileMoveError(
           logStringSource, logStringDest, status
       );
+    } else {
+      this->log_ACTIVITY_HI_MoveFileSucceeded(logStringSource, logStringDest);
     }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
@@ -131,14 +133,17 @@ namespace Svc {
         const Fw::CmdStringArg& dirName
     )
   {
+    Fw::LogStringArg logStringDirName(dirName.toChar());
+    this->log_ACTIVITY_HI_RemoveDirectoryStarted(logStringDirName);
     const Os::FileSystem::Status status =
       Os::FileSystem::removeDirectory(dirName.toChar());
     if (status != Os::FileSystem::OP_OK) {
-      Fw::LogStringArg logStringDirName(dirName.toChar());
       this->log_WARNING_HI_DirectoryRemoveError(
           logStringDirName,
           status
       );
+    } else {
+      this->log_ACTIVITY_HI_RemoveDirectorySucceeded(logStringDirName);
     }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
@@ -152,15 +157,17 @@ namespace Svc {
         const Fw::CmdStringArg& logFileName
     )
   {
-    NATIVE_INT_TYPE status = 
-      this->systemCall(command, logFileName);
     Fw::LogStringArg logStringCommand(command.toChar());
+    this->log_ACTIVITY_HI_ShellCommandStarted(
+          logStringCommand
+      );
+    NATIVE_INT_TYPE status =
+      this->systemCall(command, logFileName);
     if (status == 0) {
       this->log_ACTIVITY_HI_ShellCommandSucceeded(
           logStringCommand
       );
-    }
-    else {
+    } else {
       this->log_WARNING_HI_ShellCommandFailed(
           logStringCommand, status
       );
@@ -169,10 +176,41 @@ namespace Svc {
         status == 0 ? Os::FileSystem::OP_OK : Os::FileSystem::OTHER_ERROR
     );
     this->sendCommandResponse(
-        opCode, 
-        cmdSeq, 
+        opCode,
+        cmdSeq,
         status == 0 ? Os::FileSystem::OP_OK : Os::FileSystem::OTHER_ERROR
     );
+  }
+
+  void FileManager ::
+    AppendFile_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        const Fw::CmdStringArg& source,
+        const Fw::CmdStringArg& target
+    )
+  {
+    Fw::LogStringArg logStringSource(source.toChar());
+    Fw::LogStringArg logStringTarget(target.toChar());
+    this->log_ACTIVITY_HI_AppendFileStarted(logStringSource, logStringTarget);
+
+    Os::FileSystem::Status status;
+    status = Os::FileSystem::appendFile(source.toChar(), target.toChar(), true);
+    if (status != Os::FileSystem::OP_OK) {
+      this->log_WARNING_HI_AppendFileFailed(
+        logStringSource,
+        logStringTarget,
+        status
+      );
+    } else {
+      this->log_ACTIVITY_HI_AppendFileSucceeded(
+        logStringSource,
+        logStringTarget
+      );
+    }
+
+    this->emitTelemetry(status);
+    this->sendCommandResponse(opCode, cmdSeq, status);
   }
 
   void FileManager ::
@@ -185,7 +223,7 @@ namespace Svc {
       this->pingOut_out(0,key);
   }
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   NATIVE_INT_TYPE FileManager ::
@@ -194,13 +232,17 @@ namespace Svc {
         const Fw::CmdStringArg& logFileName
     ) const
   {
-    const U32 bufferSize = 10 + 2 * FW_CMD_STRING_MAX_SIZE;
+    const char evalStr[] = "eval '%s' 1>>%s 2>&1\n";
+    const U32 bufferSize = sizeof(evalStr) - 4 + 2 * FW_CMD_STRING_MAX_SIZE;
     char buffer[bufferSize];
-    snprintf(
-        buffer, sizeof(buffer), "eval '%s' 1>>%s 2>&1\n", 
-        command.toChar(), 
+    
+    NATIVE_INT_TYPE bytesCopied = snprintf(
+        buffer, sizeof(buffer), evalStr,
+        command.toChar(),
         logFileName.toChar()
     );
+    FW_ASSERT(static_cast<NATIVE_UINT_TYPE>(bytesCopied) < sizeof(buffer));
+    
     const int status = system(buffer);
     return status;
   }
@@ -226,9 +268,9 @@ namespace Svc {
     )
   {
     this->cmdResponse_out(
-        opCode, 
-        cmdSeq, 
-        (status == Os::FileSystem::OP_OK) ? 
+        opCode,
+        cmdSeq,
+        (status == Os::FileSystem::OP_OK) ?
           Fw::COMMAND_OK : Fw::COMMAND_EXECUTION_ERROR
     );
   }

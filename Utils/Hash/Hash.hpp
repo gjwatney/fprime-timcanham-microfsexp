@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Hash.hpp
 // \author dinkel
 // \brief  hpp file for Hash class
@@ -6,20 +6,14 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
-// 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
-// ====================================================================== 
+// acknowledged.
+//
+// ======================================================================
 
-#ifndef UTILS_HASH_HPP 
+#ifndef UTILS_HASH_HPP
 #define UTILS_HASH_HPP
 
+#include "Fw/Types/EightyCharString.hpp"
 #include <Utils/Hash/HashBuffer.hpp>
 
 namespace Utils {
@@ -32,7 +26,7 @@ namespace Utils {
     public:
 
       // ----------------------------------------------------------------------
-      // Construction and destruction 
+      // Construction and destruction
       // ----------------------------------------------------------------------
 
       //! Construct a Hash object
@@ -46,32 +40,41 @@ namespace Utils {
     public:
 
       // ----------------------------------------------------------------------
-      // Public static methods 
+      // Public static methods
       // ----------------------------------------------------------------------
 
       //! Create a hash value all at once from raw data
-      //!
+      //! \param data: pointer to start of data
+      //! \param len: length of the data
+      //! \param buffer: filled with resulting hash value
       static void hash(
-          const void *data, //! Pointer to start of data
-          const NATIVE_INT_TYPE len, //! Length of the data
-          HashBuffer& buffer //! Resulting hash value
+          const void *data,
+          const NATIVE_INT_TYPE len,
+          HashBuffer& buffer
       );
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Public instance methods
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       //! Initialize a Hash object for incremental hash computation
       //!
       void init(void);
 
-      //! Update an incremental computation with new data
+      //! Set hash value to specified value
       //!
+      void setHashValue(
+          HashBuffer &value //! Hash value
+      );
+
+      //! Update an incremental computation with new data
+      //! \param data: pointer to start of data to add to hash calculation
+      //! \param len: length of data to add to hash calculation
       void update(
-          const void *const data, //! Pointer to start of data
-          const NATIVE_INT_TYPE len //! Length of the data
+          const void *const data,
+          const NATIVE_INT_TYPE len
       );
 
       //! Finalize an incremental computation and return the result
@@ -80,19 +83,30 @@ namespace Utils {
           HashBuffer& buffer //! The result
       );
 
+      //! Finalize an incremental computation and return the result
+      //!
+      void final(U32 &hashvalue);
+
       //! Get the file extension for the supported hash type
       //! E.g., could return "SHA256"
       //!
-      static const char* getFileExtensionString(void);     
+      static const char* getFileExtensionString(void);
+
+      //! Add the extension for the supported hash type
+      //!
+      static void addFileExtension(
+          const Fw::EightyCharString& baseName, //!< The base name
+          Fw::EightyCharString& extendedName //!< The extended name
+      );
 
       //! Get the length of the file extension string
       //!
-      static NATIVE_UINT_TYPE getFileExtensionLength(void);     
+      static NATIVE_UINT_TYPE getFileExtensionLength(void);
 
     private:
 
       // ----------------------------------------------------------------------
-      // Private member variables 
+      // Private member variables
       // ----------------------------------------------------------------------
 
       //! The hash handle

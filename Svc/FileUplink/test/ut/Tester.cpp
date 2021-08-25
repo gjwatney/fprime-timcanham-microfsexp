@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #include <errno.h>
@@ -70,7 +63,7 @@ namespace Svc {
     // Send the start packet
     this->sendStartPacket(sourcePath, destPath, fileSize);
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
@@ -81,7 +74,7 @@ namespace Svc {
       const size_t byteOffset = i * PACKET_SIZE;
       this->sendDataPacket(byteOffset, packetData[i]);
       ASSERT_TLM_SIZE(1);
-      ASSERT_TLM_FileUplink_PacketsReceived(
+      ASSERT_TLM_PacketsReceived(
           0, 
           ++this->expectedPacketsReceived
       );
@@ -93,14 +86,14 @@ namespace Svc {
     checksum.update(linearPacketData, 0, fileSize);
     this->sendEndPacket(checksum);
     ASSERT_TLM_SIZE(2);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
-    ASSERT_TLM_FileUplink_FilesReceived(0, 1);
+    ASSERT_TLM_FilesReceived(0, 1);
     
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileUplink_FileReceived(0, destPath);
+    ASSERT_EVENTS_FileReceived(0, destPath);
 
     // Assert we are back in START mode
     ASSERT_EQ(FileUplink::START, this->component.receiveMode);
@@ -130,7 +123,7 @@ namespace Svc {
     // Send the start packet
     this->sendStartPacket(sourcePath, destPath, fileSize);
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
@@ -141,7 +134,7 @@ namespace Svc {
       const size_t byteOffset = i * PACKET_SIZE;
       this->sendDataPacket(byteOffset, packetData[i]);
       ASSERT_TLM_SIZE(1);
-      ASSERT_TLM_FileUplink_PacketsReceived(
+      ASSERT_TLM_PacketsReceived(
           0, 
           ++this->expectedPacketsReceived
       );
@@ -155,16 +148,16 @@ namespace Svc {
     checksum.update(linearPacketData, 0, fileSize);
     this->sendEndPacket(checksum);
     ASSERT_TLM_SIZE(3);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
-    ASSERT_TLM_FileUplink_FilesReceived(0, 1);
-    ASSERT_TLM_FileUplink_Warnings(0, 1);
+    ASSERT_TLM_FilesReceived(0, 1);
+    ASSERT_TLM_Warnings(0, 1);
     
     ASSERT_EVENTS_SIZE(2);
-    ASSERT_EVENTS_FileUplink_FileReceived(0, destPath);
-    ASSERT_EVENTS_FileUplink_BadChecksum(0, destPath, 202311690, 219088906);
+    ASSERT_EVENTS_FileReceived(0, destPath);
+    ASSERT_EVENTS_BadChecksum(0, destPath, 202311690, 219088906);
 
     // Remove the file
     this->removeFile(destPath);
@@ -180,14 +173,14 @@ namespace Svc {
     this->sendStartPacket(sourcePath, destPath, 0);
 
     ASSERT_TLM_SIZE(2);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
-    ASSERT_TLM_FileUplink_Warnings(0, 1);
+    ASSERT_TLM_Warnings(0, 1);
 
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileUplink_FileOpenError(0, destPath);
+    ASSERT_EVENTS_FileOpenError(0, destPath);
 
     ASSERT_EQ(FileUplink::START, this->component.receiveMode);
 
@@ -205,7 +198,7 @@ namespace Svc {
     // Send the start packet (packet 0)
     this->sendStartPacket(sourcePath, destPath, fileSize);
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
@@ -218,13 +211,13 @@ namespace Svc {
     const size_t byteOffset = PACKET_SIZE;
     this->sendDataPacket(byteOffset, packetData);
     ASSERT_TLM_SIZE(2);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
-    ASSERT_TLM_FileUplink_Warnings(0, 1);
+    ASSERT_TLM_Warnings(0, 1);
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileUplink_FileWriteError(0, destPath);
+    ASSERT_EVENTS_FileWriteError(0, destPath);
 
   }
 
@@ -237,7 +230,7 @@ namespace Svc {
 
     this->sendStartPacket(sourcePath, destPath, fileSize);
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
@@ -245,14 +238,14 @@ namespace Svc {
 
     this->sendStartPacket(sourcePath, destPath, fileSize);
     ASSERT_TLM_SIZE(2);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
-    ASSERT_TLM_FileUplink_Warnings(0, 1);
+    ASSERT_TLM_Warnings(0, 1);
 
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileUplink_InvalidReceiveMode(
+    ASSERT_EVENTS_InvalidReceiveMode(
         0,
         Fw::FilePacket::T_START, 
         FileUplink::DATA
@@ -272,14 +265,14 @@ namespace Svc {
     this->sendDataPacket(byteOffset, packetData);
 
     ASSERT_TLM_SIZE(2);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
-    ASSERT_TLM_FileUplink_Warnings(0, 1);
+    ASSERT_TLM_Warnings(0, 1);
 
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileUplink_InvalidReceiveMode(
+    ASSERT_EVENTS_InvalidReceiveMode(
         0,
         Fw::FilePacket::T_DATA, 
         FileUplink::START
@@ -293,14 +286,14 @@ namespace Svc {
     this->sendEndPacket(checksum);
 
     ASSERT_TLM_SIZE(2);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
-    ASSERT_TLM_FileUplink_Warnings(0, 1);
+    ASSERT_TLM_Warnings(0, 1);
 
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileUplink_InvalidReceiveMode(
+    ASSERT_EVENTS_InvalidReceiveMode(
         0,
         Fw::FilePacket::T_END, 
         FileUplink::START
@@ -320,7 +313,7 @@ namespace Svc {
 
     this->sendStartPacket(sourcePath, destPath, fileSize);
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
@@ -331,14 +324,14 @@ namespace Svc {
     this->sendDataPacket(byteOffset, packetData);
 
     ASSERT_TLM_SIZE(2);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
-    ASSERT_TLM_FileUplink_Warnings(0, 1);
+    ASSERT_TLM_Warnings(0, 1);
 
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileUplink_PacketOutOfBounds(
+    ASSERT_EVENTS_PacketOutOfBounds(
         0, 1, destPath
     );
 
@@ -358,7 +351,7 @@ namespace Svc {
     // Send the start packet (packet 0)
     this->sendStartPacket(sourcePath, destPath, fileSize);
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
@@ -371,14 +364,14 @@ namespace Svc {
     const size_t byteOffset = PACKET_SIZE;
     this->sendDataPacket(byteOffset, packetData);
     ASSERT_TLM_SIZE(2);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
-    ASSERT_TLM_FileUplink_Warnings(0, 1);
+    ASSERT_TLM_Warnings(0, 1);
 
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileUplink_PacketOutOfOrder(0, 2, 0);
+    ASSERT_EVENTS_PacketOutOfOrder(0, 2, 0);
 
     this->removeFile("test.bin");
 
@@ -395,7 +388,7 @@ namespace Svc {
     // Send the start packet (packet 0)
     this->sendStartPacket(sourcePath, destPath, fileSize);
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
@@ -404,12 +397,12 @@ namespace Svc {
     // Send a cancel packet
     this->sendCancelPacket();
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileUplink_UplinkCanceled_SIZE(1);
+    ASSERT_EVENTS_UplinkCanceled_SIZE(1);
 
     // Check component state
     ASSERT_EQ(0U, this->component.lastSequenceIndex);
@@ -432,7 +425,7 @@ namespace Svc {
     // Send the start packet (packet 0)
     this->sendStartPacket(sourcePath, destPath, fileSize);
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
@@ -442,7 +435,7 @@ namespace Svc {
     const size_t byteOffset = PACKET_SIZE;
     this->sendDataPacket(byteOffset, packetData);
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
@@ -451,12 +444,12 @@ namespace Svc {
     // Send a cancel packet
     this->sendCancelPacket();
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileUplink_PacketsReceived(
+    ASSERT_TLM_PacketsReceived(
         0, 
         ++this->expectedPacketsReceived
     );
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileUplink_UplinkCanceled_SIZE(1);
+    ASSERT_EVENTS_UplinkCanceled_SIZE(1);
 
     // Check component state
     ASSERT_EQ(0U, this->component.lastSequenceIndex);
@@ -474,10 +467,19 @@ namespace Svc {
   void Tester ::
     from_bufferSendOut_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer buffer
+        Fw::Buffer& buffer
     )
   {
     this->pushFromPortEntry_bufferSendOut(buffer);
+  }
+
+  void Tester ::
+    from_pingOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        U32 key
+    )
+  {
+    this->pushFromPortEntry_pingOut(key);
   }
 
   // ----------------------------------------------------------------------
@@ -524,6 +526,18 @@ namespace Svc {
         this->get_from_LogText(0)
     );
 
+    // pingIn
+    this->connect_to_pingIn(
+        0,
+        this->component.get_pingIn_InputPort(0)
+    );
+
+    // pingOut
+    this->component.set_pingOut_OutputPort(
+        0,
+        this->get_from_pingOut(0)
+    );
+
   }
 
   void Tester ::
@@ -541,7 +555,7 @@ namespace Svc {
 
     const size_t bufferSize = filePacket.bufferSize();
     U8 bufferData[bufferSize];
-    Fw::Buffer buffer(0, 0, reinterpret_cast<U64>(bufferData), bufferSize);
+    Fw::Buffer buffer(bufferData, bufferSize);
 
     const Fw::SerializeStatus status = filePacket.toBuffer(buffer);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
@@ -577,7 +591,7 @@ namespace Svc {
   {
     const Fw::FilePacket::DataPacket dataPacket = {
       { Fw::FilePacket::T_DATA, this->sequenceIndex++ },
-      byteOffset,
+      static_cast<U32>(byteOffset),
       PACKET_SIZE,
       packetData
     };

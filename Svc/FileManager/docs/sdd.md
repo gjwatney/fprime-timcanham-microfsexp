@@ -1,4 +1,4 @@
-<title>Svc::FileManager</title>
+\page SvcFileManagerComponent Svc::FileManager Component
 # Svc::FileManager Component
 
 ## 1. Introduction
@@ -19,7 +19,7 @@ TBD
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](FileManager.html) [MD](FileManager.md)
+TBD
 
 ## 5. Module Checklists
 

@@ -11,13 +11,11 @@
 #include <stdio.h>
 
 namespace Svc {
-#if FW_OBJECT_NAMES == 1
     CommandDispatcherImpl::CommandDispatcherImpl(const char* name) :
         CommandDispatcherComponentBase(name),
-#else
-    CommandDispatcherImpl::CommandDispatcherImpl() :
-#endif
-    m_seq(0), m_numCmdsDispatched(0), m_numCmdErrors(0)
+        m_seq(0),
+        m_numCmdsDispatched(0),
+        m_numCmdErrors(0)
     {
         memset(this->m_entryTable,0,sizeof(this->m_entryTable));
         memset(this->m_sequenceTracker,0,sizeof(this->m_sequenceTracker));
@@ -43,6 +41,12 @@ namespace Svc {
                 this->m_entryTable[slot].used = true;
                 this->log_DIAGNOSTIC_OpCodeRegistered(opCode,portNum,slot);
                 slotFound = true;
+            } else if ((this->m_entryTable[slot].used) &&
+                (this->m_entryTable[slot].opcode == opCode) &&
+                (this->m_entryTable[slot].port == portNum) &&
+                (not slotFound)) {
+                    slotFound = true;
+                    this->log_DIAGNOSTIC_OpCodeReregistered(opCode,portNum);
             } else if (this->m_entryTable[slot].used) { // make sure no duplicates
                 FW_ASSERT(this->m_entryTable[slot].opcode != opCode, opCode);
             }
@@ -204,19 +208,19 @@ namespace Svc {
     void CommandDispatcherImpl::CMD_NO_OP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     	Fw::LogStringArg no_op_string("Hello, World!");
     	// Log event for NO_OP here.
-    	this->log_COMMAND_NoOpReceived();
+    	this->log_ACTIVITY_HI_NoOpReceived();
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
     }
 
     void CommandDispatcherImpl::CMD_NO_OP_STRING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& arg1) {
 		Fw::LogStringArg msg(arg1.toChar());
     	// Echo the NO_OP_STRING args here.
-    	this->log_COMMAND_NoOpStringReceived(msg);
+    	this->log_ACTIVITY_HI_NoOpStringReceived(msg);
     	this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
     }
 
     void CommandDispatcherImpl::CMD_TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, F32 arg2, U8 arg3) {
-    	this->log_COMMAND_TestCmd1Args(arg1,arg2,arg3);
+    	this->log_ACTIVITY_HI_TestCmd1Args(arg1,arg2,arg3);
     	this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
     }
 

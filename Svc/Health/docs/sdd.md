@@ -1,4 +1,4 @@
-<title>Svc::Health Component SDD</title>
+\page SvcHealthComponent Svc::Health Component
 # Svc::Health Component
 
 ## 1. Introduction
@@ -75,7 +75,7 @@ The `Svc::Health` component pings other components and checks for their response
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](Health.html) [MD](Health.md)
+TBD
 
 ## 5. Module Checklists
 

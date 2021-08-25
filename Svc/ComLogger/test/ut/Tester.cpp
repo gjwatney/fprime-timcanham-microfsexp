@@ -304,7 +304,7 @@ namespace Svc {
   {
       // Construct illegal filePrefix, and set it via the friend:
       U8 filePrefix[2048];
-      U8 fileName[2048];
+      U8 fileName[2128];
       memset(fileName, 0, sizeof(fileName));
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf((char*) filePrefix, sizeof(filePrefix), "illegal/fname?;\\*");
@@ -429,7 +429,7 @@ namespace Svc {
       ASSERT_EVENTS_FileWriteError(
           0,
           Os::File::NOT_OPENED,
-          2,
+          0,
           2,
           (char*) fileName
       );
@@ -468,7 +468,7 @@ namespace Svc {
       ASSERT_EVENTS_FileWriteError(
           1,
           Os::File::NOT_OPENED,
-          2,
+          0,
           2,
           (char*) fileName
       );
@@ -553,4 +553,12 @@ namespace Svc {
     file.close();
   }
 
+  void Tester ::
+    from_pingOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        U32 key
+    )
+  {
+    this->pushFromPortEntry_pingOut(key);
+  }
 };

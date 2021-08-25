@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #ifndef CFDP_Checksum_HPP
@@ -47,6 +40,9 @@ namespace CFDP {
       //! Construct a Checksum object and initialize it with a value
       Checksum(const U32 value);
 
+      //! Copy a Checksum object
+      Checksum(const Checksum &original);
+
       //! Destroy a Checksum object
       ~Checksum();
 
@@ -59,7 +55,7 @@ namespace CFDP {
       //! Assign checksum to this
       const Checksum& operator=(const Checksum& checksum);
 
-      //! Comapre checksum and this for equality
+      //! Compare checksum and this for equality
       bool operator==(const Checksum& checksum) const;
 
       //! Compare checksum and this for inequality
@@ -67,9 +63,9 @@ namespace CFDP {
 
       //! Update the checksum value by accumulating the words in the data
       void update(
-          const U8 *const data, //! The data
-          const U32 offset, //! The offset of the start of the data, relative to the start of the file
-          const U32 length //! The length of the data in bytes
+          const U8 *const data, //!< The data
+          const U32 offset, //!< The offset of the start of the data, relative to the start of the file
+          const U32 length //!< The length of the data in bytes
       );
 
       //! Get the checksum value

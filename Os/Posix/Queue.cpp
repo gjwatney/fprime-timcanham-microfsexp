@@ -51,7 +51,7 @@ namespace Os {
         m_handle(-1) {
     }
 
-    Queue::QueueStatus Queue::create(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
+    Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
 
         this->m_name = "/QP_";
         this->m_name += name;
@@ -141,7 +141,7 @@ namespace Os {
                             // non-blocking, return
                             return QUEUE_FULL;
                         } else {
-                            // Go to sleep until we receive a signal that something was takeng off the queue:
+                            // Go to sleep until we receive a signal that something was taken off the queue:
                             // Note: pthread_cont_wait must be called "with mutex locked by the calling 
                             // thread or undefined behavior results." - from the docs
                             ret = pthread_mutex_lock(mp);

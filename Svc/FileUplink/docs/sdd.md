@@ -1,6 +1,5 @@
-<title>Svc::FileUplink</title>
-
-# Svc::FileUplink
+\page SvcFileUplinkComponent Svc::FileUplink Component
+# Svc::FileUplink Component
 
 ## 1 Introduction
 
@@ -166,7 +165,7 @@ Upon receipt of a cancel packet *P*, `FileUplink` does the following:
 
 ## 4 Dictionary
 
-Dictionaries: [HTML](FileUplink.html) [MD](FileUplink.md)
+TBD
 
 ## 5 Checklists
 

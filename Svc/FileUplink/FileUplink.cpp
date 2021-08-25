@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #include <Svc/FileUplink/FileUplink.hpp>
@@ -61,29 +54,32 @@ namespace Svc {
   void FileUplink ::
     bufferSendIn_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer buffer
+        Fw::Buffer& buffer
     )
   {
     Fw::FilePacket filePacket;
     const Fw::SerializeStatus status = filePacket.fromBuffer(buffer);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    const Fw::FilePacket::Header& header = filePacket.asHeader();
-    switch (header.type) {
-      case Fw::FilePacket::T_START:
-        this->handleStartPacket(filePacket.asStartPacket());
-        break;
-      case Fw::FilePacket::T_DATA:
-        this->handleDataPacket(filePacket.asDataPacket());
-        break;
-      case Fw::FilePacket::T_END:
-        this->handleEndPacket(filePacket.asEndPacket());
-        break;
-      case Fw::FilePacket::T_CANCEL:
-        this->handleCancelPacket();
-        break;
-      default:
-        FW_ASSERT(0);
-        break;
+    if (status != Fw::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_DecodeError(status);
+    } else {
+        const Fw::FilePacket::Header& header = filePacket.asHeader();
+        switch (header.type) {
+          case Fw::FilePacket::T_START:
+            this->handleStartPacket(filePacket.asStartPacket());
+            break;
+          case Fw::FilePacket::T_DATA:
+            this->handleDataPacket(filePacket.asDataPacket());
+            break;
+          case Fw::FilePacket::T_END:
+            this->handleEndPacket(filePacket.asEndPacket());
+            break;
+          case Fw::FilePacket::T_CANCEL:
+            this->handleCancelPacket();
+            break;
+          default:
+            FW_ASSERT(0);
+            break;
+        }
     }
     this->bufferSendOut_out(0, buffer);
   }
@@ -105,6 +101,11 @@ namespace Svc {
   void FileUplink ::
     handleStartPacket(const Fw::FilePacket::StartPacket& startPacket)
   {
+    // Clear all event throttles in preparation for new start packet
+    this->log_WARNING_HI_FileWriteError_ThrottleClear();
+    this->log_WARNING_HI_InvalidReceiveMode_ThrottleClear();
+    this->log_WARNING_HI_PacketOutOfBounds_ThrottleClear();
+    this->log_WARNING_HI_PacketOutOfOrder_ThrottleClear();
     this->packetsReceived.packetReceived();
     if (this->receiveMode != START) {
       this->file.osFile.close();
@@ -154,7 +155,7 @@ namespace Svc {
       this->filesReceived.fileReceived();
       this->checkSequenceIndex(endPacket.header.sequenceIndex);
       this->compareChecksums(endPacket);
-      this->log_ACTIVITY_HI_FileUplink_FileReceived(this->file.name);
+      this->log_ACTIVITY_HI_FileReceived(this->file.name);
     }
     else {
       this->warnings.invalidReceiveMode(Fw::FilePacket::T_END);
@@ -166,7 +167,7 @@ namespace Svc {
     handleCancelPacket(void)
   {
     this->packetsReceived.packetReceived();
-    this->log_ACTIVITY_HI_FileUplink_UplinkCanceled();
+    this->log_ACTIVITY_HI_UplinkCanceled();
     this->goToStartMode();
   }
 

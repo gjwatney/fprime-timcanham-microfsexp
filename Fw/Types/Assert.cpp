@@ -1,4 +1,4 @@
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <assert.h>
 #include <stdio.h>
@@ -12,7 +12,7 @@
 #else
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define fileIdFs "Assert file ID %d: Line: %d "
+#define fileIdFs "Assert file ID 0x%08X: Line: %d "
 #else
 #define fileIdFs "Assert file \"%s\": Line: %d "
 #endif
@@ -118,7 +118,12 @@ namespace Fw {
     STATIC AssertHook* s_assertHook = NULL;
 
     void AssertHook::registerHook(void) {
+        this->previousHook = s_assertHook;
         s_assertHook = this;
+    }
+
+    void AssertHook::deregisterHook() {
+        s_assertHook = this->previousHook;
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) {

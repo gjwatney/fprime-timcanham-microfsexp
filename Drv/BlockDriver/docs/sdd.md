@@ -1,9 +1,9 @@
-<title>Drv::BlockDriver</title>
+\page DrvBlockDriverComponent Drv::BlockDriver Component
 # Drv::BlockDriver Component
 
 ## 1. Introduction
 
-The `Drv::BlockDriver` is a demonstration component that loops back data buffers from `Ref::SendBuffApp` [HTML](../../../Ref/SendBuffApp/docs/sdd.html) [MD](../../../Ref/SendBuffApp/docs/sdd.md) to `Ref::RecvBuffApp` [HTML](../../../Ref/RecvBuffApp/docs/sdd.html) [MD](../../../Ref/RecvBuffApp/docs/sdd.md) It also emulates a timing interrupt driven by the public method `void callIsr(void)`.
+The `Drv::BlockDriver` is a demonstration component that loops back data buffers. It also emulates a timing interrupt driven by the public method `void callIsr(void)`.
 
 ## 2. Requirements
 
@@ -26,7 +26,7 @@ The `Drv::BlockDriver` component has the following component diagram:
 
 ## 4. Dictionaries
 
-Dictionaries [HTML](BlockDriver.html) [MD](BlockDriver.md)
+TBD
 
 ## 5. Module Checklists
 

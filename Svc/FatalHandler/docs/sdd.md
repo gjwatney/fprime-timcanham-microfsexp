@@ -1,4 +1,4 @@
-<title>Svc::FatalHandler Component SDD</title>
+\page SvcFatalHandlerComponent Svc::FatalHandler Component
 # Svc::FatalHandler Component
 
 ## 1. Introduction
@@ -55,7 +55,7 @@ The `Svc::FatalHandler` handles FATAL notifications:
 
 ## 4. Dictionary
 
-Dictionaries: [HTML](FatalHandler.html) [MD](FatalHandler.md)
+TBD
 
 ## 4. Module Checklists
 

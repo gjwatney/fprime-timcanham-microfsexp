@@ -6,15 +6,8 @@
  * \copyright
  * Copyright 2009-2015, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  * <br /><br />
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 
 
@@ -23,7 +16,7 @@
 
 #include <Svc/CmdDispatcher/CommandDispatcherComponentAc.hpp>
 #include <Os/Mutex.hpp>
-#include <Svc/CmdDispatcher/CommandDispatcherImplCfg.hpp>
+#include <CommandDispatcherImplCfg.hpp>
 
 namespace Svc {
 
@@ -45,11 +38,7 @@ namespace Svc {
             //!  are initialized.
             //!
             //!  \param name the component instance name
-#if FW_OBJECT_NAMES == 1
             CommandDispatcherImpl(const char* name);
-#else
-            CommandDispatcherImpl();
-#endif
             //!  \brief Component initialization routine
             //!
             //!  The initialization function calls the initialization
@@ -83,7 +72,7 @@ namespace Svc {
             //!
             //!  \param portNum the number of the incoming port.
             //!  \param data the buffer containing the command.
-            //!  \param context a user value returned with the statuss
+            //!  \param context a user value returned with the status
             void seqCmdBuff_handler(NATIVE_INT_TYPE portNum, Fw::ComBuffer &data, U32 context);
             //!  \brief component command registration handler
             //!
@@ -97,7 +86,7 @@ namespace Svc {
             //!  \brief component ping handler
             //!
             //!  The ping handler responds to messages to verify that the task
-            //!  is still executing. Will call output poing port
+            //!  is still executing. Will call output ping port
             //!
             //!  \param portNum the number of the incoming port.
             //!  \param opCode the opcode being registered.
@@ -134,7 +123,7 @@ namespace Svc {
             //!  This command will clear the table tracking the completion of commands.
             //!  It is meant to be used if the tracking table has gotten full because of
             //!  a software failure. It is dangerous in that it can clear a command
-            //!  that a sequencer is watiting for.
+            //!  that a sequencer is waiting for.
             //!
             //!  \param opCode the CLEAR_TRACKING opcode.
             //!  \param cmdSeq the assigned sequence number for the command

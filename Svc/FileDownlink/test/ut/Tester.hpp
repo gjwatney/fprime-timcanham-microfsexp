@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FileDownlink/test/ut/Tester.hpp
 // \author bocchino
 // \brief  hpp file for FileDownlink test harness implementation class
@@ -6,24 +6,18 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
-// 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
-// ====================================================================== 
+// acknowledged.
+// ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Test/UnitTest.hpp>
 #include "GTestBase.hpp"
 
+#define MAX_HISTORY_SIZE 10
 #define FILE_BUFFER_CAPACITY 100
 
 namespace Svc {
@@ -47,7 +41,7 @@ namespace Svc {
           FileBuffer(
               const U8 *const data,
               const size_t size
-          ); 
+          );
 
           //! Construct a FileBuffer from a history of data packets
           FileBuffer(
@@ -66,7 +60,7 @@ namespace Svc {
 
           //! Compare two file buffers
           static bool compare(
-              const FileBuffer& fb1, 
+              const FileBuffer& fb1,
               const FileBuffer& fb2
           );
 
@@ -104,9 +98,9 @@ namespace Svc {
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       //! Create a file F
       //! Downlink F
@@ -126,24 +120,46 @@ namespace Svc {
       //!
       void cancelInIdleMode(void);
 
+      //! Create a file F
+      //! Downlink partial F
+      //! Verify that the downlinked file matches F
+      //!
+      void downlinkPartial(void);
+
+      //! Timeout
+      //!
+      void timeout(void);
+
+      //! sendFilePort
+      //! Test downlinking a file via a port
+      //!
+      void sendFilePort(void);
+
     private:
 
       // ----------------------------------------------------------------------
       // Handlers for from ports
       // ----------------------------------------------------------------------
 
-      //! Handler for from_bufferGetCaller
-      //!
-      Fw::Buffer from_bufferGetCaller_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
-          U32 size 
-      );
-
       //! Handler for from_bufferSendOut
       //!
       void from_bufferSendOut_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer buffer 
+          Fw::Buffer& buffer
+      );
+
+      //! Handler for from_bufferSendOut
+      //!
+      void from_pingOut_handler(
+          const NATIVE_INT_TYPE portNum,
+          U32 key
+      );
+
+      //! Handler for from_FileComplete
+      //!
+      void from_FileComplete_handler(
+          const NATIVE_INT_TYPE portNum,
+          Svc::SendFileResponse resp
       );
 
     private:
@@ -167,6 +183,17 @@ namespace Svc {
           const char *const sourceFileName, //!< The source file name
           const char *const destFileName, //!< The destination file name
           const Fw::CommandResponse response //!< The expected command response
+      );
+
+      //! Command the FileDownlink component to send a file
+      //! Assert a command response
+      //!
+      void sendFilePartial(
+          const char *const sourceFileName, //!< The source file name
+          const char *const destFileName, //!< The destination file name
+          const Fw::CommandResponse response, //!< The expected command response
+          U32 startIndex, //!< The starting index
+          U32 length //!< The amount of bytes to downlink
       );
 
       //! Command the FileDownlink component to cancel a file downlink
@@ -193,7 +220,8 @@ namespace Svc {
         History<Fw::FilePacket::DataPacket>& historyOut, //!< The outgoing history
         const Fw::FilePacket::Type endPacketType, //!< The expected ending packet type
         const size_t numPackets, //!< The expected number of packets
-        const CFDP::Checksum& checksum //!< The expected checksum
+        const CFDP::Checksum& checksum, //!< The expected checksum,
+        U32 startOffset //!< Starting byte offset
       );
 
       //! Validate a file packet buffer and convert it to a file packet
@@ -244,14 +272,17 @@ namespace Svc {
       //!
       FileDownlink component;
 
-      //! The expected number of packets sent so far
+      // Allocated buffers storage
+      U8* buffers[1000];
+
+
+      //! Buffers index
       //!
-      U32 expectedPacketsSent;
+      U32 buffers_index;
 
       //! The current sequence index
       //!
       U32 sequenceIndex;
-
   };
 
 } // end namespace Svc

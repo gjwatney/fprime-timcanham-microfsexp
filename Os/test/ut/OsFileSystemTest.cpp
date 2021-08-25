@@ -150,8 +150,9 @@ void testTestFileSystem() {
 	
 	printf("Reading the files in (%s)\n", cur_dir);
 	const int num_str = 5;
+        U32 num_2 = num_str;
 	Fw::EightyCharString str_array[num_str];
-	if ((file_sys_status = Os::FileSystem::readDirectory(cur_dir, num_str, str_array)) != Os::FileSystem::OP_OK) {
+	if ((file_sys_status = Os::FileSystem::readDirectory(cur_dir, num_str, str_array, num_2)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to read files in (%s)\n", cur_dir);
 		printf("\tReturn status: %d\n", file_sys_status);
 		FW_ASSERT(0);
@@ -173,6 +174,35 @@ void testTestFileSystem() {
         char dir_buff[256];
         getcwd(dir_buff, 256);
 	printf("Current dir: %s\n", dir_buff);
+
+	//Create a file in OPEN_CREATE mode
+	printf("Creating test file (%s)\n", test_file_name1);
+	if ((file_status = test_file.open(test_file_name1, Os::File::OPEN_CREATE)) != Os::File::OP_OK) {
+		printf("\tFailed to OPEN_CREATE file: %s\n", test_file_name1);
+		printf("\tReturn status: %d\n", file_status);
+		FW_ASSERT(0);
+	}
+
+	//Close test file
+	test_file.close();
+
+	//Should not be able to OPEN_CREATE file since it already exist and we have
+	//include_excl enabled
+	printf("Creating test file (%s)\n", test_file_name1);
+	if ((file_status = test_file.open(test_file_name1, Os::File::OPEN_CREATE)) != Os::File::FILE_EXISTS) {
+		printf("\tFailed to not to overwrite existing file: %s\n", test_file_name1);
+		printf("\tReturn status: %d\n", file_status);
+		FW_ASSERT(0);
+	}
+
+	printf("Removing test file 1 (%s)\n", test_file_name1);
+	if ((file_sys_status = Os::FileSystem::removeFile(test_file_name1)) != Os::FileSystem::OP_OK) {
+		printf("\tFailed to remove file (%s)\n", test_file_name1);
+		printf("\tReturn status: %d\n", file_sys_status);
+		FW_ASSERT(0);
+	}
+	FW_ASSERT(stat(test_file_name1, &info) == -1);
+
 }
 
 extern "C" {
