@@ -19,7 +19,6 @@ SRC =      	TlmChanComponentAi.xml \
            	TlmChanImplGet.cpp \
            	TlmChanImplTask.cpp 
 
-HDR = 		TlmChanImpl.hpp \
-			TlmChanImplCfg.hpp
+HDR = 		TlmChanImpl.hpp 
 
 SUBDIRS = test

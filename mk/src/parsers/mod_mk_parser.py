@@ -16,6 +16,13 @@ xml_gen_dictionary = {
                             ['EnumAc.hpp',],
                             '\tcd $(BUILD_ROOT)/<module_dir> && $(MKDIR) $(BUILD_ROOT)/<module_dir>/$(AC_DEP_DIR) && $(AC_ENUM_GEN) $(notdir $<) $(DEP_FILE_ARG) $(BUILD_ROOT)/<module_dir>/$(AC_DEP_DIR)/$(basename $(notdir $<)).dep'
                             ],
+                        'Array': 
+                            [
+                            'ArrayAi.xml',
+                            ['ArrayAc.cpp',],
+                            ['ArrayAc.hpp',],
+                            '\tcd $(BUILD_ROOT)/<module_dir> && $(MKDIR) $(BUILD_ROOT)/<module_dir>/$(AC_DEP_DIR) && $(AC_ENUM_GEN) $(notdir $<) $(DEP_FILE_ARG) $(BUILD_ROOT)/<module_dir>/$(AC_DEP_DIR)/$(basename $(notdir $<)).dep'
+                            ],
                         'Serializable': 
                             [
                             'SerializableAi.xml',

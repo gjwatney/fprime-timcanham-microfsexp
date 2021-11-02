@@ -15,6 +15,6 @@
 
 SRC = PolyDbComponentAi.xml PolyDbImpl.cpp
 
-HDR = PolyDbImpl.hpp PolyDbImplCfg.hpp
+HDR = PolyDbImpl.hpp 
 
 SUBDIRS = test

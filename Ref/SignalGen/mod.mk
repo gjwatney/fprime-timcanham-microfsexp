@@ -4,7 +4,12 @@
 
 SRC = \
                         SignalGen.cpp \
-			SignalGenComponentAi.xml
+			SignalGenComponentAi.xml \
+			SignalTypeEnumAi.xml \
+			SignalInfoSerializableAi.xml \
+			SignalPairSerializableAi.xml \
+			SignalPairSetArrayAi.xml \
+			SignalSetArrayAi.xml
 
 HDR = SignalGen.hpp 
 

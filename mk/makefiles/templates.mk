@@ -1,6 +1,7 @@
 
 compile-templates:
 	@echo "Generating templates"
+	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/arrays && $(MAKE) -f Makefile
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/component && $(MAKE) -f Makefile
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/test && $(MAKE) -f Makefile
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/port && $(MAKE) -f Makefile
@@ -18,6 +19,7 @@ compile-templates:
 
 clean-templates:
 	@echo "Cleaning templates"
+	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/arrays && $(MAKE) -f Makefile  clean
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/component && $(MAKE) -f Makefile  clean
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/test && $(MAKE) -f Makefile  clean
 	@cd $(BUILD_ROOT)/Autocoders/Python/src/fprime_ac/generators/templates/port && $(MAKE) -f Makefile clean

@@ -44,10 +44,11 @@ SRC_LINUX=      Posix/IPCQueue.cpp \
 				Linux/InterruptLock.cpp \
 				Linux/WatchdogTimer.cpp \
 				X86/IntervalTimer.cpp \
-				Linux/IntervalTimer.cpp \
+				Posix/IntervalTimer.cpp \
 				Posix/Mutex.cpp \
 				Linux/FileSystem.cpp \
-				Posix/LocklessQueue.cpp
+				Posix/LocklessQueue.cpp \
+				Posix/TaskId.cpp
 
 SRC_DARWIN =    MacOs/IPCQueueStub.cpp \ # NOTE(mereweth) - provide a stub that only works in single-process, not IPC
                	Pthreads/Queue.cpp \

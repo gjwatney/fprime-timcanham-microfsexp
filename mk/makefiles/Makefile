@@ -10,7 +10,7 @@ endif
 
 # Global code generator targets
 
-AC_LVL1  : $(foreach module,$($(DEPLOYMENT)_MODULES),$(SRC_AC_SERIALIZABLE_$(subst /,,$(module))))
+AC_LVL1  : $(foreach module,$($(DEPLOYMENT)_MODULES),$(SRC_AC_SERIALIZABLE_$(subst /,,$(module))) $(SRC_AC_ENUM_$(subst /,,$(module))) $(SRC_AC_ARRAY_$(subst /,,$(module))))
 AC_LVL2  : $(foreach module,$($(DEPLOYMENT)_MODULES),$(SRC_AC_PORT_$(subst /,,$(module))))
 AC_LVL3  : $(foreach module,$($(DEPLOYMENT)_MODULES),$(SRC_AC_COMPONENT_$(subst /,,$(module))))
 AC_LVL4  : $(foreach module,$($(DEPLOYMENT)_MODULES),$(SRC_AC_APP_$(subst /,,$(module))))

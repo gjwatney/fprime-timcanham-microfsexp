@@ -15,6 +15,6 @@
 
 SRC = PrmDbComponentAi.xml PrmDbImpl.cpp
 
-HDR = PrmDbImpl.hpp PrmDbImplCfg.hpp
+HDR = PrmDbImpl.hpp
 
 SUBDIRS = test

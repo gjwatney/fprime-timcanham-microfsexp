@@ -16,8 +16,6 @@
 SRC = \	
 	ConfigCheck.cpp
 	
-HDR = \
-	Config.hpp \
-	SerIds.hpp
+HDR = 
 
 
