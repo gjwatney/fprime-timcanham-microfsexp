@@ -32,6 +32,8 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 ##
 
+SET(CMAKE_CXX_FLAGS_RELEASE "-std=c++14" CACHE STRING "C++ flags." FORCE)
+
 include("${FPRIME_PROJECT_ROOT}/fprime-vxworks/fprime-vxworks.cmake")
 
 
