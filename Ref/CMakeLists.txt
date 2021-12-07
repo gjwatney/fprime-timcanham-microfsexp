@@ -31,6 +31,10 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 # NOTE: register custom targets between these two lines
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 ##
+
+include("${FPRIME_PROJECT_ROOT}/fprime-vxworks/fprime-vxworks.cmake")
+
+
 # Section 3: Components and Topology
 #
 # This section includes deployment specific directories. This allows use of non-
