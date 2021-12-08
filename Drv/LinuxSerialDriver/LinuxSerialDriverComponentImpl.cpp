@@ -14,16 +14,16 @@
 #include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Os/TaskString.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
-#include <time.h>
+#include <ctime>
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <termios.h>
-#include <stdio.h>
-#include <errno.h>
+#include <cstdio>
+#include <cerrno>
 
 //#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
 #define DEBUG_PRINT(x,...)
@@ -280,7 +280,7 @@ namespace Drv {
   }
 
   LinuxSerialDriverComponentImpl ::
-    ~LinuxSerialDriverComponentImpl(void)
+    ~LinuxSerialDriverComponentImpl()
   {
       if (this->m_fd != -1) {
           DEBUG_PRINT("Closing UART device %d\n", this->m_fd);
@@ -326,7 +326,7 @@ namespace Drv {
 
       Fw::Buffer buff;
 
-      while (1) {
+      while (true) {
           // wait for data
           int sizeRead = 0;
 
@@ -422,7 +422,7 @@ namespace Drv {
   }
 
   void LinuxSerialDriverComponentImpl ::
-    quitReadThread(void) {
+    quitReadThread() {
       this->m_quitReadThread = true;
   }
 
