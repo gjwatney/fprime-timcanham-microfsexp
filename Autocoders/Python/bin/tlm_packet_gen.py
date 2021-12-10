@@ -196,15 +196,14 @@ class TlmPacketParser(object):
         # uses the topology model to process the items
         # create list of used parsed component xmls
         parsed_xml_dict = {}
-        for comp in the_parsed_topology_xml.get_instances():
-            if comp.get_type() in topology_model.get_base_id_dict():
-                parsed_xml_dict[comp.get_type()] = comp.get_comp_xml()
-            else:
-                PRINT.info(
-                    "Components with type {} aren't in the topology model.".format(
-                        comp.get_type()
-                    )
+        if comp.get_type() in topology_model.get_base_id_dict():
+            parsed_xml_dict[comp.get_type()] = comp.get_comp_xml()
+        else:
+            PRINT.info(
+                "Components with type {} aren't in the topology model.".format(
+                    comp.get_type()
                 )
+            )
 
         xml_list = []
         for parsed_xml_type in parsed_xml_dict:
@@ -304,7 +303,6 @@ class TlmPacketParser(object):
 
             packet_list_container = list()
 
-            packetized_channel_list = list()
             it.ignore_list = list()
             id_list = list()  # check for duplicates
             ignore_name_list = list()
@@ -319,21 +317,25 @@ class TlmPacketParser(object):
             for entry in element_tree.getroot():
                 # read in topology file
                 if entry.tag == "import_topology":
-                    top_file = search_for_file("Packet", entry.text)
+                    top_file = search_for_file("Topology", entry.text)
                     if top_file is None:
                         raise TlmPacketParseIOError(
                             "import file %s not found" % entry.text
                         )
-                    the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(
-                        top_file
-                    )
-                    deployment = the_parsed_topology_xml.get_deployment()
-                    if self.verbose:
-                        print("Found assembly or deployment named: %s\n" % deployment)
-                    channel_size_dict = self.generate_channel_size_dict(
-                        the_parsed_topology_xml, xml_filename
-                    )
-                elif entry.tag == "packet":
+                    # if only emitting file name for dependencies, print the name
+                    if self.dependency:
+                        print(top_file)
+                    else:
+                        the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(
+                            top_file
+                        )
+                        deployment = the_parsed_topology_xml.get_deployment()
+                        if self.verbose:
+                            print("Found assembly or deployment named: %s\n" % deployment)
+                        channel_size_dict = self.generate_channel_size_dict(
+                            the_parsed_topology_xml, xml_filename
+                        )
+                elif entry.tag == "packet" and not self.dependency:
                     if channel_size_dict is None:
                         raise TlmPacketParseValueError(
                             "%s: Topology import must be before packet definitions"
@@ -394,7 +396,7 @@ class TlmPacketParser(object):
                         levels.append(packet_level)
                     vfd.close()
 
-                elif entry.tag == "ignore":
+                elif entry.tag == "ignore" and not self.dependency:
                     if channel_size_dict is None:
                         raise TlmPacketParseValueError(
                             "%s: Topology import must be before packet definitions"
@@ -413,6 +415,8 @@ class TlmPacketParser(object):
                                 "Channel %s (%d) ignored" % (channel_name, channel_id)
                             )
                         ignore_name_list.append(channel_name)
+                elif self.dependency:
+                    pass # provide non-exception conditional for dependency file generation
                 else:
                     raise TlmPacketParseValueError("Invalid packet tag %s" % entry.tag)
 
@@ -422,6 +426,9 @@ class TlmPacketParser(object):
             raise TlmPacketParseValueError(
                 "Invalid xml type %s" % element_tree.getroot().tag
             )
+
+        if self.dependency:
+            return
 
         output_file_base = os.path.splitext(os.path.basename(xml_filename))[0].replace(
             "Ai", ""
@@ -471,7 +478,7 @@ class TlmPacketParser(object):
         source_target = target_directory + os.sep + source
 
         # write dependency file
-        if self.dependency is not None:
+        if self.dependency:
             dependency_file_txt = "\n%s %s: %s\n" % (
                 source_target,
                 header_target,
@@ -572,6 +579,7 @@ def pinit():
         "--build_root",
         dest="build_root_overwrite",
         type="string",
+        action="append",
         help="Overwrite environment variable BUILD_ROOT",
         default=None,
     )
@@ -581,17 +589,15 @@ def pinit():
         "--verbose",
         dest="verbose_flag",
         help="Enable verbose mode showing more runtime detail (def: False)",
-        action="store_true",
-        default=False,
     )
 
     parser.add_option(
         "-d",
-        "--dependency-file",
-        dest="dependency_file",
-        type="string",
-        help="Generate dependency file for make",
-        default=None,
+        "--dependency-list",
+        dest="dependency_list",
+        action="store_true",
+        default=False,
+        help="print file dependencies",
     )
 
     return parser
@@ -620,10 +626,19 @@ def main():
         print("ERROR: Too many filenames, should only have one")
         return
 
-    print("Processing packet file %s" % xml_filename)
-    set_build_roots(os.environ.get("BUILD_ROOT"))
+    packet_parser = TlmPacketParser(opt.verbose_flag, opt.dependency_list)
 
-    packet_parser = TlmPacketParser(opt.verbose_flag, opt.dependency_file)
+    if not opt.dependency_list:
+        print("Processing packet file %s" % xml_filename)
+
+    if opt.build_root_overwrite != None:
+        build_root_str = ""
+        for entry in opt.build_root_overwrite:
+            build_root_str += entry + ":"
+        set_build_roots(build_root_str)
+    else:
+        set_build_roots(os.environ.get("BUILD_ROOT"))
+
     try:
         packet_parser.gen_packet_file(xml_filename)
     except TlmPacketParseValueError as e:
