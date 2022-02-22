@@ -17,7 +17,7 @@
 #include <Fw/Tlm/TlmPacket.hpp>
 #include <Fw/Com/ComBuffer.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 
@@ -46,7 +46,7 @@ namespace Svc {
                 this->m_tlmPacket.setTimeTag(p_entry->lastUpdate);
                 this->m_tlmPacket.setTlmBuffer(p_entry->buffer);
                 this->m_comBuffer.resetSer();
-                Fw::SerializeStatus stat = this->m_tlmPacket.serialize(this->m_comBuffer);
+                Fw::SerializeStatus stat = this->m_comBuffer.serialize(this->m_tlmPacket);
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
                 p_entry->updated = false;
                 this->PktSend_out(0,this->m_comBuffer,0);
