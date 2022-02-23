@@ -4,7 +4,7 @@
  * \brief Component that stores telemetry channel values
  *
  * \copyright
- * Copyright 2009-2015, by the California Institute of Technology.
+ * Copyright 2009-2022, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
  * acknowledged.
  * <br /><br />
@@ -15,8 +15,6 @@
 
 #include <Svc/TlmChan/TlmChanComponentAc.hpp>
 #include <TlmChanImplCfg.hpp>
-#include <Os/Mutex.hpp>
-#include <Fw/Tlm/TlmPacket.hpp>
 
 namespace Svc {
 
@@ -67,7 +65,6 @@ namespace Svc {
 
             // work variables
             Fw::ComBuffer m_comBuffer;
-            Fw::TlmPacket m_tlmPacket;
 
     };
 

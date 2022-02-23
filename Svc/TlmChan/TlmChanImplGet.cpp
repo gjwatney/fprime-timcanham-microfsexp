@@ -6,11 +6,8 @@
  */
 
 #include <Svc/TlmChan/TlmChanImpl.hpp>
-#include <cstring>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
-
-#include <stdio.h>
 
 namespace Svc {
 
