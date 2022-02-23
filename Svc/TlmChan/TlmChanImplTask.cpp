@@ -16,6 +16,8 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Com/ComPacket.hpp>
 
+#include <stdio.h>
+
 namespace Svc {
 
     void TlmChanImpl::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
@@ -45,8 +47,8 @@ namespace Svc {
             TlmEntry* p_entry = &this->m_tlmEntries[1-this->m_activeBuffer].buckets[entry];
             if ((p_entry->updated) && (p_entry->used)) {
                 // check to see if there is room left in ComBuffer
-                if ((sizeof(p_entry->id) + p_entry->lastUpdate.SERIALIZED_SIZE + p_entry->buffer.SERIALIZED_SIZE) >
-                    (this->m_comBuffer.getBuffLeft())) {
+                if ((sizeof(p_entry->id) + p_entry->lastUpdate.SERIALIZED_SIZE + p_entry->buffer.getBuffLength()) >
+                    (this->m_comBuffer.getBuffCapacity()-this->m_comBuffer.getBuffLength())) {
                     // If not enough room left, send the current ComBuffer
                     this->PktSend_out(0,this->m_comBuffer,0);
                     // reinitialize comBuffer
@@ -58,14 +60,14 @@ namespace Svc {
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
                 stat = this->m_comBuffer.serialize(p_entry->lastUpdate);
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
-                stat = this->m_comBuffer.serialize(p_entry->buffer);
+                stat = this->m_comBuffer.serialize(p_entry->buffer.getBuffAddr(),p_entry->buffer.getBuffLength(),true);
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
                 p_entry->updated = false;
             }
         }
 
-        // if the ComBuffer is partially filled, send it
-        if (this->m_comBuffer.getBuffLength() > 0) {
+        // if the ComBuffer is partially filled (other than packet type), send it
+        if (this->m_comBuffer.getBuffLength() > sizeof(FwPacketDescriptorType)) {
             this->PktSend_out(0,this->m_comBuffer,0);
         }
     }
