@@ -76,7 +76,7 @@ namespace Fw {
             // add seconds and microseconds to existing time
             void add(U32 seconds, U32 mseconds);
 
-#ifdef BUILD_UT // Stream operators to support Googletest
+#if BUILD_UT // Stream operators to support Googletest
             friend std::ostream& operator<<(std::ostream& os,  const Time& val);
 #endif
         PRIVATE:

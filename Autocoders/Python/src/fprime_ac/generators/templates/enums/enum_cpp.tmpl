@@ -126,7 +126,7 @@ a == $item_value#slurp
     return !(*this == other);
   }
 
-\#ifdef BUILD_UT
+\#if BUILD_UT
   std::ostream& operator<<(std::ostream& os, const ${name}& obj) {
     os << "${name}::";
     const ${name}::t e = obj.e;

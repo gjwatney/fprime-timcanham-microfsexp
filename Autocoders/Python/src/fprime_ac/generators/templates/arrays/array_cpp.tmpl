@@ -263,7 +263,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 
 \#endif
 
-\#ifdef BUILD_UT
+\#if BUILD_UT
   std::ostream& operator<<(std::ostream& os, const ${name}& obj) {
     Fw::String temp;
     obj.toString(temp);

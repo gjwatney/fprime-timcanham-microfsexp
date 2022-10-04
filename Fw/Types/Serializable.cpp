@@ -27,7 +27,7 @@ namespace Fw {
 
 #endif
 
-#ifdef BUILD_UT
+#if BUILD_UT
     std::ostream& operator<<(std::ostream& os, const Serializable& val) {
         Fw::String out;
         val.toString(out);
@@ -663,7 +663,7 @@ namespace Fw {
         return &this->getBuffAddr()[this->m_serLoc];
     }
 
-#ifdef BUILD_UT
+#if BUILD_UT
     bool SerializeBufferBase::operator==(const SerializeBufferBase& other) const {
         if (this->getBuffLength() != other.getBuffLength()) {
             return false;

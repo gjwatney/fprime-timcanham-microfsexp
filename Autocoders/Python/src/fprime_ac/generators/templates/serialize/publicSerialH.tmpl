@@ -34,7 +34,7 @@ public:
 #end if
     ${name}& operator=(const ${name}& src); //!< equal operator
     bool operator==(const ${name}& src) const; //!< equality operator
-#ifdef BUILD_UT
+\#if BUILD_UT
     // to support GoogleTest framework in unit tests
     friend std::ostream& operator<<(std::ostream& os, const ${name}& obj);
 #endif

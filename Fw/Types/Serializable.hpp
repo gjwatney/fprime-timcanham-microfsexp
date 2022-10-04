@@ -31,7 +31,7 @@ namespace Fw {
             virtual void toString(StringBase& text) const; //!< generate text from serializable
 #endif
 
-#ifdef BUILD_UT
+#if BUILD_UT
             friend std::ostream& operator<<(std::ostream& os, const Serializable& val);
 #endif
 
@@ -133,7 +133,7 @@ namespace Fw {
                                                                                     // Will increment deserialization pointer
 
 
-#ifdef BUILD_UT
+#if BUILD_UT
             bool operator==(const SerializeBufferBase& other) const;
             friend std::ostream& operator<<(std::ostream& os, const SerializeBufferBase& buff);
 #endif

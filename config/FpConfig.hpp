@@ -13,6 +13,10 @@
 #define _FW_CONFIG_HPP_
 #include <Fw/Types/BasicTypes.hpp>
 
+#ifndef BUILD_UT
+#define BUILD_UT 0
+#endif
+
 typedef PlatformIndexType FwIndexType;
 #define PRI_FwIndexType PRI_PlatformIndexType
 
