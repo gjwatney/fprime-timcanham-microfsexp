@@ -39,14 +39,16 @@ void GenericHubComponentImpl ::send_data(const HubType type,
     FW_ASSERT(data != nullptr);
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
-    Fw::Buffer outgoing = dataOutAllocate_out(0, size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType));
+    Fw::Buffer outgoing = dataOutAllocate_out(0, size + sizeof(U32) + sizeof(U32) + sizeof(U32));
     Fw::SerializeBufferBase& serialize = outgoing.getSerializeRepr();
     // Write data to our buffer
     status = serialize.serialize(static_cast<U32>(type));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
     status = serialize.serialize(static_cast<U32>(port));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-    status = serialize.serialize(data, size);
+    status = serialize.serialize(static_cast<U32>(size));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    status = serialize.serialize(data, size, true);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
     outgoing.setSize(serialize.getBuffLength());
     dataOut_out(0, outgoing);
@@ -67,7 +69,7 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum,
     HubType type = HUB_TYPE_MAX;
     U32 type_in = 0;
     U32 port = 0;
-    FwBuffSizeType size = 0;
+    U32 size = 0;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
 
     // Representation of incoming data prepped for serialization
@@ -87,8 +89,8 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum,
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
 
     // invokeSerial deserializes arguments before calling a normal invoke, this will return ownership immediately
-    U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType);
-    U32 rawSize = fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(FwBuffSizeType);
+    U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32) + sizeof(U32);
+    U32 rawSize = fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(U32);
     FW_ASSERT(rawSize == static_cast<U32>(size));
     if (type == HUB_TYPE_PORT) {
         // Com buffer representations should be copied before the call returns, so we need not "allocate" new data
