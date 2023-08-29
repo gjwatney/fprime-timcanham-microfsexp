@@ -31,6 +31,7 @@ namespace Os {
   {
   }
 
+
   void Tester :: FileModel ::
       clear()
   {
@@ -44,6 +45,52 @@ namespace Os {
   // Tests
   // ----------------------------------------------------------------------
   
+  void Tester ::
+      NewTest()
+  {
+    const U16 NumberBins = 10;
+    const U16 NumberFiles = 10;
+    const U16 RandomIterations = 500;
+
+    // Instantiate the rules
+    InitFileSystem initFileSystem(NumberBins, FILE_SIZE, NumberFiles);
+    OpenRandomFile openFile;
+    CloseRandomFile closeFile;
+    WriteRandomFile writeFile;
+    Cleanup cleanup;
+
+    // Apply the rules
+    
+    initFileSystem.apply(*this);
+
+    // Run the Rules randomly
+    STest::Rule<Tester>* rules[] = { 
+                                     &openFile,
+                                     &closeFile,
+                                     &writeFile
+                                  };
+    STest::RandomScenario<Tester> randomScenario(
+        "RandomScenario",
+        rules,
+        sizeof(rules) / sizeof(STest::Rule<Tester>*)
+    );
+    STest::BoundedScenario<Tester> boundedScenario(
+        "BoundedScenario",
+        randomScenario,
+        RandomIterations
+    );
+    const U32 numSteps = boundedScenario.run(*this);
+    ASSERT_EQ(RandomIterations, numSteps);
+
+    cleanup.apply(*this);
+
+  }
+
+
+
+
+
+
   // ----------------------------------------------------------------------
   // CopyTest
   // ----------------------------------------------------------------------
@@ -96,6 +143,33 @@ namespace Os {
   // ----------------------------------------------------------------------
   // AppendTest
   // ----------------------------------------------------------------------
+  void Tester ::
+      SimFileTest()
+  {
+
+
+    SimFileSystem fs(3, 4, 100);  // Initialize the file system with 3 bins and 4 files per bin
+
+    // Get the states of all files
+    fs.openFile();
+
+    std::unordered_map<std::string, SimFileSystem::FileState> fileStates = fs.getAllFileStates();
+    // Check the state of each file
+    for (const auto& fileStatePair : fileStates) {
+        std::string filePath = fileStatePair.first;
+        SimFileSystem::FileState state = fileStatePair.second;
+
+        if (state == SimFileSystem::FileState::DOES_NOT_EXIST) {
+            std::cout << "File " << filePath << " does not exist.\n";
+        } else if (state == SimFileSystem::FileState::CLOSED) {
+            std::cout << "File " << filePath << " is closed.\n";
+        } else if (state == SimFileSystem::FileState::OPENED) {
+            std::cout << "File " << filePath << " is open.\n";
+        }
+    }
+
+  }
+
   void Tester ::
       AppendTest()
   {
@@ -418,6 +492,12 @@ namespace Os {
     offNominalDir2.apply(*this);
     offNominalDir3.apply(*this);
     offNominalDir4.apply(*this);
+
+    for (U16 i = 0; i < MAX_BINS; i++)
+    {
+      delete directories[i];
+    }
+
 
     cleanup.apply(*this);
   }
@@ -792,6 +872,16 @@ namespace Os {
       closeFile[i]->apply(*this);
     }
 
+    for (U16 i = 0; i < TotalFiles; i++)
+    {
+      delete openFile[i];
+    }
+
+    for (U16 i = 0; i < TotalFiles; i++)
+    {
+      delete closeFile[i];
+    }
+
     cleanup.apply(*this);
   }
 
@@ -957,6 +1047,12 @@ namespace Os {
     }
 
     listings.apply(*this);
+
+    for (U16 i = 0; i < TotalFiles; i++)
+    {
+      delete openFile[i];
+    }
+
 
     cleanup.apply(*this);
     

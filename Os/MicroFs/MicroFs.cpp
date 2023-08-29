@@ -130,8 +130,9 @@ getFileStateIndex(const char* fileName) {
 
     FwNativeUIntType binIndex;
     FwNativeUIntType fileIndex;
-    char crcExtension;
-    FwNativeIntType stat = sscanf(fileName,filePathSpec,&binIndex,&fileIndex,&crcExtension);
+    // crcExtension should be 2 bytes because scanf appends a null character at the end.
+    char crcExtension[2];
+    FwNativeIntType stat = sscanf(fileName,filePathSpec,&binIndex,&fileIndex,&crcExtension[0]);
     if (stat != 2) {
         return -1;
     }
@@ -661,18 +662,6 @@ Status moveFile(const char* originPath, const char* destPath) {
 
     return removeFile(originPath);
 
-}
-
-Status handleFileError(File::Status fileStatus) {
-    Status fileSystemStatus = OTHER_ERROR;
-
-    return fileSystemStatus;
-}
-
-Status initAndCheckFileStats(const char* filePath, struct stat* fileInfo = nullptr) {
-    FileSystem::Status fs_status = OP_OK;
-
-    return fs_status;
 }
 
 Status copyFile(const char* originPath, const char* destPath) {
